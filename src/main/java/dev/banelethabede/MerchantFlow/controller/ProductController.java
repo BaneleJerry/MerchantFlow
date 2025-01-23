@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +12,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import dev.banelethabede.MerchantFlow.model.Product;
 import dev.banelethabede.MerchantFlow.service.ProductService;
@@ -37,10 +40,24 @@ public class ProductController {
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
+    @GetMapping("/products/{productId}/image")
+    public ResponseEntity<?> getImageByproduct(@PathVariable int productId){
+        Product product = service.getProductById(productId);
+        byte[] imageData = product.getImageDate();
+
+        return ResponseEntity.ok().contentType(MediaType.valueOf(product.getImageType())).body(imageData);
+    }
+    
+
     @PostMapping("/products")
-    public Product addProduct(@RequestBody Product product) {
-        System.out.println("received :" + product);
-        return service.addproduct(product);
+    public ResponseEntity<?> addProduct(@RequestPart Product product,@RequestPart MultipartFile imagefile ) {
+        
+        try { 
+            Product dbProduct = service.addproduct(product, imagefile);
+            return new ResponseEntity<>(dbProduct, HttpStatus.CREATED);
+        }catch(Exception e){
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PutMapping("/products")

@@ -1,9 +1,11 @@
 package dev.banelethabede.MerchantFlow.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import dev.banelethabede.MerchantFlow.model.Product;
 import dev.banelethabede.MerchantFlow.repository.ProductRepository;
@@ -29,7 +31,10 @@ public class ProductService {
 
     }
 
-    public Product addproduct(Product product) {
+    public Product addproduct(Product product, MultipartFile imagefile) throws IOException {
+        product.setImageName(imagefile.getOriginalFilename());
+        product.setImageType(imagefile.getContentType());
+        product.setImageDate(imagefile.getBytes());    
         return repo.save(product);
     }
 
