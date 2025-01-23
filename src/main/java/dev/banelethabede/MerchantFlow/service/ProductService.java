@@ -1,49 +1,40 @@
 package dev.banelethabede.MerchantFlow.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import dev.banelethabede.MerchantFlow.model.Product;
+import dev.banelethabede.MerchantFlow.repository.ProductRepository;
 
 @Service
 public class ProductService {
 
-    List<Product> products = new ArrayList<>(Arrays.asList(new Product(2, "Mayo", 5.00)));
+    // List<Product> products = new ArrayList<>(Arrays.asList(new Product(2, "Mayo", 5.00)));
+
+    @Autowired
+    ProductRepository repo;
 
     public List<Product> getProducts() {
-        return this.products;
+        return repo.findAll();
     }
 
     public Product getProductById(int id) {
-        return products.stream()
-                .filter(p -> p.getId() == id)
-                .findFirst().orElse(null);
+        return repo.findById(id).orElse(null);
     }
 
-    public boolean removeProductById(int id) {
-        return products.removeIf(p -> p.getId() == id);
+    public void removeProductById(int id) {
+     repo.deleteById(id);
 
     }
 
-    public boolean addproduct(Product product) {
-        if (products.stream().noneMatch(p -> p.getId() == product.getId())) {
-            products.add(product);
-            return true;
-        }
-        return false;
+    public Product addproduct(Product product) {
+        return repo.save(product);
     }
 
     public Product updateProduct(Product product) {
-        for (int i = 0; i < products.size(); i++) {
-            if (products.get(i).getId() == product.getId()) {
-                products.set(i, product);
-                return product;
-            }
+         return repo.save(product);
         }
-        return null;
 
-    }
 }

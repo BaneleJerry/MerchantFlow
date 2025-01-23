@@ -3,6 +3,8 @@ package dev.banelethabede.MerchantFlow.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,17 +23,22 @@ public class ProductController {
     ProductService service;
 
     @GetMapping("/products")
-    public List<Product> getProducts() {
-        return service.getProducts();
+    public ResponseEntity<List<Product>> getProducts() {
+        return new ResponseEntity<>(service.getProducts(), HttpStatus.OK);
     }
 
     @GetMapping("/products/{id}")
-    public Product getProductById(@PathVariable int id) {
-        return service.getProductById(id);
+    public ResponseEntity<Product> getProductById(@PathVariable int id) {
+        Product product = service.getProductById(id);
+        if(product == null){
+            return new ResponseEntity<>(product, HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
     @PostMapping("/products")
-    public boolean addProduct(@RequestBody Product product) {
+    public Product addProduct(@RequestBody Product product) {
         System.out.println("received :" + product);
         return service.addproduct(product);
     }
@@ -42,8 +49,8 @@ public class ProductController {
     }
 
     @DeleteMapping("/products/{id}")
-    public boolean deleteProductById(@PathVariable int id) {
-        return service.removeProductById(id);
+    public void deleteProductById(@PathVariable int id) {
+         service.removeProductById(id);
     }
 
 }
