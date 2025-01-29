@@ -31,12 +31,12 @@ public class Product {
     private String description;
     private boolean available;
     private int quantity;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date release;
 
     private String imageName;
     private String imageType;
     @Lob
     private byte[] imageDate;
-
+    
 }
